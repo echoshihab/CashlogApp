@@ -1,0 +1,295 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<style>
+    form {
+        width: 70%;
+        height: 250px;
+        margin: auto;
+        position: relative;
+        padding-bottom: 90px;
+    }
+
+    img {
+        padding-right: 10px;
+        padding-top:10px;
+    }
+
+
+</style>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'mainforms/scripts.js' %}"></script>
+<!-- these two below are for tabs three above are for datepicker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+
+
+
+
+    <title>LXA Forms</title>
+</head>
+
+
+<body>
+<img src="{% static 'mainforms/lxalogo.jpg' %}" align="left" />
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#cForm">Cash Log</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#pForm">Patient Pay</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#Report">Reports</a>
+    </li>
+  </ul>
+  <!-- Nav Tabs -->
+
+
+<div class="tab-content">
+
+<div id="cForm" class="container tab-pane active">
+<!--this top two are for tabs -->
+<div class = "container mt-3">
+
+<form id='cashlogform' action = "/cashlog/" method = 'post' novalidate>
+{% csrf_token %}
+<div class = "form-row">
+    <div class="col">
+{{ employFormc.staffname.label }} {{ employFormc.staffname }}
+    <small class="alert" id='namealert'></small>
+    </div>
+    <div class="col">
+{{ cashForm.entrydate.label }} {{cashForm.entrydate}}
+    <small class="alert" id='datealert'></small>
+    </div>
+</div>
+
+<div class = "form-row">
+    <div class="col">
+<label>
+{{ cashForm.recount.label }}
+{{ cashForm.recount }}
+</label>
+    </div>
+    <div class="col">
+
+{% for radio in cashForm.shifttime %}
+<div class= "form-check form-check-inline">
+        {{ radio }}
+ </div>
+{% endfor %}
+<small class="alert" id='shiftalert'></small>
+    </div>
+</div>
+
+<br>
+
+{{ locFormc.locname.label }}
+{% for radio in locFormc.locname %}
+<div class= "form-check form-check-inline">
+        {{ radio }}
+ </div>
+{% endfor %}
+
+
+<small class="alert" id='localert'></small>
+<br>
+<table class="table table-sm" >
+    <thead>
+        <tr>
+            <th scope="col">Money</th>
+            <th scope="col">Count</th>
+        </tr>
+    </thead>
+        <tr>
+            <th scope="row">{{ cashForm.onec.label }}</th>
+            <td> {{cashForm.onec}} </td>
+        </tr>
+         <tr>
+            <th scope="row">{{ cashForm.fivec.label }}</th>
+            <td> {{cashForm.fivec}} </td>
+            </tr>
+           <tr>
+            <th scope="row">{{ cashForm.tenc.label }}</th>
+            <td> {{cashForm.tenc}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.twfvc.label }}</th>
+            <td> {{cashForm.twfvc}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.oned.label }}</th>
+            <td> {{cashForm.oned}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.twod.label }}</th>
+            <td> {{cashForm.twod}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.fived.label }}</th>
+            <td> {{cashForm.fived}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.tend.label }}</th>
+            <td> {{cashForm.tend}} </td>
+            </tr>
+            <tr>
+            <th scope="row">{{ cashForm.twntd.label }}</th>
+            <td> {{cashForm.twntd}} </td>
+            </tr>
+</table>
+
+<br>
+
+<button id="verifyClog" type="button" class="btn btn-primary" name="verify" value="Verify">Verify</button>
+<button  type="button" onclick="return resetFormc();" class="btn btn-secondary" value="Reset">Reset</button>
+
+
+<div class="modal fade" id="cModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Review & Submit (Click x to re-edit):</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id='modalCloseClog'>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <center>
+        <div id ="test"> </div><br>
+
+
+        <input type = 'submit' class="btn btn-primary" value = 'Submit' id='submitClog' disabled />
+        </center>
+      </div>
+    </div>
+</div>
+</div>
+
+
+</form>
+
+</div>
+</div>
+<!-- start of patient pay form !-->
+<div id="pForm"  class="container tab-pane fade">
+<div class = "container mt-3">
+<form method = "post" action="{% url 'patientpay' %}" id="patientpayform" novalidate>
+{% csrf_token %}
+<div class = "form-row">
+    <div class="col">
+{{ employFormp.staffname.label }} {{ employFormp.staffname }}
+<small class="alert" id='namealertp'></small>
+    </div>
+    <div class="col">
+{{ ptPayForm.datepay.label }} {{ ptPayForm.datepay }}
+<small class="alert" id='datealertp'></small>
+    </div>
+</div>
+
+
+<br>
+{{ locFormp.locname.label }}
+{% for radio in locFormp.locname %}
+<div class= "form-check form-check-inline">
+        {{ radio }}
+ </div>
+{% endfor %}
+<small class="alert" id='localertp'></small>
+<br>
+<table class="table" >
+     <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tr>
+        <th scope="row">{{ ptPayForm.ptnamepay.label }}</th>
+        <td> {{ ptPayForm.ptnamepay }} </td>
+    </tr>
+    <tr>
+        <th scope="row">{{ ptPayForm.ptidpay.label }}</th>
+        <td> {{ ptPayForm.ptidpay }} </td>
+    </tr>
+    <tr>
+        <th scope="row">{{ ptPayForm.payitem.label }}</th>
+        <td> {{ ptPayForm.payitem }}
+        <small class="alert" id='payitemAlert'></small></td>
+    </tr>
+    <tr>
+        <th scope="row">{{ ptPayForm.paytype.label }}</th>
+        <td> {{ ptPayForm.paytype }} </td>
+    </tr>
+     <tr>
+        <th scope="row">{{ ptPayForm.otherpay.label }}</th>
+        <td> {{ ptPayForm.otherpay }} </td>
+    </tr>
+    <tr>
+        <th scope="row">{{ ptPayForm.amountpay.label }}</th>
+        <td> {{ ptPayForm.amountpay }}
+        <small class="alert" id='payamountAlert'></small></td>
+    </tr>
+
+</table>
+<br>
+
+<button id="verifyPlog" type="button" class="btn btn-primary" name="verify" value="Verify">Verify</button>
+<button type="button" class="btn btn-secondary" onclick="return resetFormp();" value="Reset">Reset</button>
+
+
+<!-- patientpay modal -->
+
+<div class="modal fade" id="pModal" tabindex="-1" role="dialog" aria-labelledby="patientpaymodal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="patientpaymodal">Review & Submit:</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id='modalClosePlog'>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <center>
+        <div id ="ptpayPreSubmission"> </div><br>
+
+
+        <input type = 'submit' class="btn btn-primary" value = 'Submit' id='submitPlog' disabled='disabled'/>
+        </center>
+      </div>
+    </div>
+</div>
+</div>
+
+</form>
+</div>
+</div>
+<!-- end of patient pay form !-->
+
+<div id="Report" class="container tab-pane fade">
+
+   
+    <iframe src="{% url 'reportclog' %}" style="overflow:hidden;height:500px;width:100%;margin-top:10px"  ></iframe>
+
+    <iframe src="{% url 'reportptpay' %}" style="overflow:hidden;height:500px;width:100%;margin-top:10px"  ></iframe>
+
+
+</div>
+
+</div>
+
+</body>
+
+<script src="{% static 'mainforms/verifyscript.js' %}"></script>
+</html>

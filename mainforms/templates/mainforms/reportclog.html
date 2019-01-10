@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<style>
+	.scroller {
+		width: 100%;
+		height: 500px;
+		overflow: scroll;
+	}
+    </style>
+    <title>Report</title>
+</head>
+<body>
+<div class = 'scroller'>
+	<h3>Cashlog Report</h3>
+	<table class="table table-sm">
+	<thead>
+	<tr>
+		<th scope="col">Entry ID</th>
+		<th scope="col">Entry Date</th>
+		<th scope="col">Shift Time</th>
+		<th scope="col">Recount</th>
+		<th scope="col">$0.01</th>
+		<th scope="col">$0.05</th>
+		<th scope="col">$0.10</th>
+		<th scope="col">$0.25</th>
+		<th scope="col">$1.00</th>
+		<th scope="col">$2.00</th>
+		<th scope="col">$5.00</th>
+		<th scope="col">$10.00</th>
+		<th scope="col">$20.00</th>
+		<th scope="col">Total Cash</th>
+		<th scope="col">Staff Name </th>
+		<th scope="col">Location</th>
+	</tr>
+	</thead>
+
+	
+	<tbody>
+
+	{% for item in cashreport %}
+	<tr>
+		<th scope="row">{{ item.entryid }}</th>
+		<td>{{ item.entrydate }}	</td>
+		<td>{{ item.shifttime }}	</td>
+		<td>{{ item.recount }} </td>
+		<td>{{ item.onec }}</td>
+		<td>{{ item.fivec }}</td>
+		<td>{{ item.tenc }}	</td>
+		<td>{{ item.twfvc }}	</td>
+		<td>{{ item.oned }}</td>
+		<td>{{ item.twod }}</td>
+		<td>{{ item.fived }}</td>
+		<td>{{ item.tend }}	</td>
+		<td>{{ item.twntd }}	</td>
+		<td>{{ item.totalcash }}	</td>
+		<td>{{ item.staffid }} </td>
+		<td> <a href="{% url 'reportclog' item.locid %}">{{ item.locid }}</a></td>
+	</tr>
+	{% endfor %}
+	</tbody>
+	</table >
+</div>
+
+
+
+</body>
+</html>

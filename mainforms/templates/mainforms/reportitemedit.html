@@ -1,0 +1,103 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+	<style>
+	#updateSubmit {
+		margin-left: 5px;
+	}
+	</style>
+    <!-- this three below are for date picker -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="{% static 'mainforms/scripts.js' %}"></script>
+
+    <title>Item Edit</title>
+</head>
+<body>
+	<h3>Cashlog Entry ID# {{ itemid }} </h3>
+<form id='cashlogformupdate' action = "{% url 'clogItemEdit' itemid %}" method = 'post' novalidate>
+{% csrf_token %}
+<table class="table table-sm">
+<thead>
+<tr>
+	<th scope="col">Entry Date</th>
+	<th scope="col">Shift Time</th>
+	<th scope="col">Recount</th>
+	<th scope="col">Staff Name </th>
+	<th scope="col">Location</th>
+</tr>
+
+
+<thead>
+
+<tbody>
+
+
+<tr>
+	<td>{{ form.entrydate }}	</td>
+	<td>{{ form.shifttime }}	</td>
+	<td>{{ form.recount }} </td>
+	<td>{{ staff.staffname }} <small class="alert" id='namealert'></small> </td>
+	<td>{{ location.locname }}</td>
+</tr>
+
+	<tr>
+	<th scope="col">$0.01</th>
+	<th scope="col">$0.05</th>
+	<th scope="col">$0.10</th>
+	<th scope="col">$0.25</th>
+	<th scope="col">$1.00</th>
+	<th scope="col">$2.00</th>
+	<th scope="col">$5.00</th>
+	<th scope="col">$10.00</th>
+	<th scope="col">$20.00</th>
+	</tr>
+	<tr>
+	<td>{{ form.onec }}</td>
+	<td>{{ form.fivec }}</td>
+	<td>{{ form.tenc }}	</td>
+	<td>{{ form.twfvc }}	</td>
+	<td>{{ form.oned }}</td>
+	<td>{{ form.twod }}</td>
+	<td>{{ form.fived }}</td>
+	<td>{{ form.tend }}	</td>
+	<td>{{ form.twntd }}	</td>
+
+
+</tr>
+
+</tbody>
+</table>
+<button id="updateSubmit" type="button" class="btn btn-secondary" name="Submit" value="updateSubmit">Save Entry</button>
+</form>
+
+<div id='errors'> </div>
+
+<script>
+//Cashlog save entry button
+document.getElementById("updateSubmit").onclick=validateCashEntryID;
+
+function validateCashEntryID() {
+var nameMessage = "";
+var validName = document.getElementById('id_staffname').value;
+
+if (validName == null || validName == "" )  {
+   nameMessage += "<font color='red'>Valid Name Required </font>";
+   document.getElementById("id_staffname").setAttribute('class', 'form-control is-invalid');
+   document.getElementById("namealert").innerHTML = nameMessage;
+   errorCounter += 1;
+
+ } else {
+  	document.getElementById("id_staffname").classList.remove('is-invalid');
+   	document.getElementById("namealert").innerHTML = nameMessage;
+   	document.getElementById('cashlogformupdate').submit();
+ }
+ }
+</script>
+</body>
+</html>
