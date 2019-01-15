@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<title>Report Edit</title>
+
+</head>
+<body>
+	{% if messages %}
+
+		{% for message in messages %}
+			<h3>{{message}}</h3>
+		{% endfor %}
+
+	{% endif %}
+
+	<div class="row">
+	  <div class="col-sm-6">
+	    <div class="card">
+	      <div class="card-body">
+	        <h5 class="card-title">Cashlog Report </h5>
+	        <a href="{% url 'reportedit' %}" class="btn btn-primary">Edit</a>
+	      </div>
+	    </div>
+	  </div>
+	  <div class="col-sm-6">
+	    <div class="card">
+	      <div class="card-body">
+	        <h5 class="card-title">Patient Pay Report</h5>
+	        <a href="#" class="btn btn-primary">Edit</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+{% block content %} {% endblock %}
+
+</body>
+</html>
+
+

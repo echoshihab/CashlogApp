@@ -12,6 +12,7 @@ urlpatterns = [
     path('<parameter>/reportptpay/', views.resultViewPtpay, name='reportptpay'),
     path('<int:parameter>/reportedit/', views.reporteditView, name='reportitemedit'),
     path('<int:parameter>/clogitemupdate/', views.clogitemupdateView, name= 'clogItemEdit'),
+    path('superuser/', views.superUserview, name='superuser')
 
 
 ]

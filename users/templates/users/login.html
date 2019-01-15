@@ -1,0 +1,15 @@
+{% extends "users/userbase.html" %}
+
+
+{% block content %}
+	{% csrf_token %}
+
+	{{ form|crispy }}
+
+
+	<div class = "form-group">
+		<button class='btn btn-success' type="submit">Log In </button>
+	</div>
+{% endblock content %}
+
+<!-- the form here is being rendered by default django login form from auth_views.LoginView-->

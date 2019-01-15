@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .cashlogform import CashentryForm, EmployeeForm, LocationsForm, PatientPayForm, CashentryUpdateForm, EmployeeUpdateForm, LocationsUpdateForm
 from .models import Cashentry, Employee, Locations, Patientpay
 import datetime
@@ -212,3 +213,12 @@ def clogitemupdateView(request, parameter):
     updateEntry.update(onec=postCashArray['onec'], fivec=postCashArray['fivec'], tenc=postCashArray['tenc'], twfvc=postCashArray['twfvc'], oned=postCashArray['oned'], twod=postCashArray['twod'], fived=postCashArray['fived'], tend=postCashArray['tend'], twntd=postCashArray['twntd'], staffid=getEmployee.staffid, locid=getLocation.locid, shifttime=postCashArray['shifttime'],
      entrydate=postCashArray['entrydate'], totalcash=clogRoundedTotalCash, recount=postCashArray['recount'])
     return render(request, 'mainforms/test.html', {'test': errorsCform})
+
+
+def superUserview(request):
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = None
+    messages.success(request, f'Hello {username} , please select a report below to edit:')
+    return render(request, 'mainforms/superuser.html')
