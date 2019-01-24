@@ -180,12 +180,13 @@ def reporteditView(request, parameter='none'):
         return render(request, 'mainforms/reportedit.html', {'report': last_hundred_msges})
     else:
         editEntry = Cashentry.objects.get(entryid=parameter)
+        convertedDate = datetime.datetime.strptime(str(editEntry.entrydate), '%Y-%m-%d').strftime('%m/%d/%Y')
         editForm = CashentryUpdateForm(instance=editEntry)
         getEmp = Employee.objects.get(staffid=editEntry.staffid)
         editEmp = EmployeeUpdateForm(instance=getEmp)
         getLoc = Locations.objects.get(locid=editEntry.locid)
         editLoc = LocationsUpdateForm(instance=getLoc)
-        return render(request, 'mainforms/reportitemedit.html', {'itemid': parameter, 'form': editForm, 'location': editLoc, 'staff': editEmp})
+        return render(request, 'mainforms/reportitemedit.html', {'itemid': parameter, 'form': editForm, 'formdate': convertedDate, 'location': editLoc, 'staff': editEmp})
 
 # this view below deals with cashentry item update request
 def clogitemupdateView(request, parameter):
@@ -195,7 +196,7 @@ def clogitemupdateView(request, parameter):
     errorsCform = CashentryForm(request.POST).errors
     errorsEform = EmployeeUpdateForm(request.POST).errors
     errorsLform = LocationsUpdateForm(request.POST).errors
-
+    
 
     clogname = request.POST.get('staffname')
     cloglocation = request.POST.get('locname')

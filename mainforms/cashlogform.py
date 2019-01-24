@@ -153,7 +153,7 @@ class CashentryUpdateForm(forms.ModelForm):
             "entrydate",
         ]
         labels = {
-            "entrydate": "Date (yyyy-mm-dd):",
+            "entrydate": "Date (mm-dd-yyyy):",
             "shifttime": "Time:",
             "onec": "$0.01:",
             "fivec": "$0.05:",
@@ -168,7 +168,7 @@ class CashentryUpdateForm(forms.ModelForm):
         }
         widgets = {
             "shifttime": forms.Select(choices=shiftChoices),
-            "entrydate": forms.DateInput({'class': 'datepickerupdate form-control', 'autocomplete': 'off', 'onkeydown': 'return false;', 'onpaste': 'return false;'}),
+            "entrydate": forms.DateInput(format='%m/%d/%Y', attrs={'class': 'datepickerupdate form-control', 'autocomplete': 'off', 'onkeydown': 'return false;', 'onpaste': 'return false;'}),
             "recount": forms.Select(choices=recountChoices),
 
         }
