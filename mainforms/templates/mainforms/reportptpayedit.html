@@ -1,94 +1,82 @@
-{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
 	 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
+	
+	
 
+    <title>Patient Pay Report</title>
 
-    <title>Report Edit</title>
 </head>
+
+
 <body>
 
-<div>
+	<div>
 	<ul class="nav justify-content-end">
-	<li class="nav-item">
+	   <li class="nav-item">
 	    <a class="nav-link active" href="{% url 'superuser' %}"> Super User Page </a>
 	  </li>
 	  <li class="nav-item">
-	    	<a class="nav-link disabled" href="{% url 'reportedit' %}">Cash Log Edit</a>
+	    	<a class="nav-link active" href="{% url 'reportedit' %}">Cash Log Edit</a>
 	  </li>
 	  <li class="nav-item">
-	    <a class="nav-link" href="{% url 'ptpayedit' %}">Patient Pay Edit</a>
+	    <a class="nav-link disabled" href="{% url 'ptpayedit' %}">Patient Pay Edit</a>
 	  </li>
 	  <li class="nav-item">
-	    <a class="nav-link" href="#">Log Out</a>
+	    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
 	  </li>
 	 
 	</ul>
 
 	<h3>
-	  Cash Log Edit
+	  Patient Pay Edit
 	  <small class="text-muted">Last Hundred Entries Only</small>
 	</h3>
 </div>
 
-<div class = 'container-fluid'>
-<table class="table table-sm">
-<thead>
-<tr>
-	<th scope="col">Entry ID</th>
-	<th scope="col">Entry Date</th>
-	<th scope="col">Shift Time</th>
-	<th scope="col">Recount</th>
-	<th scope="col">$0.01</th>
-	<th scope="col">$0.05</th>
-	<th scope="col">$0.10</th>
-	<th scope="col">$0.25</th>
-	<th scope="col">$1.00</th>
-	<th scope="col">$2.00</th>
-	<th scope="col">$5.00</th>
-	<th scope="col">$10.00</th>
-	<th scope="col">$20.00</th>
-	<th scope="col">Total Cash</th>
-	<th scope="col">Staff Name </th>
-	<th scope="col">Location</th>
-	<th scope="col"></th>
-</tr>
-<thead>
+	<table class="table table-sm">
+	<thead>
+	<tr>
+		<th scope="col">Entry ID</th>
+		<th scope="col">Entry Date</th>
+		<th scope="col">MRN</th>
+		<th scope="col">Patient Name</th>
+		<th scope="col">Payment Item</th>
+		<th scope="col">Payment Type</th>
+		<th scope="col">Amount</th>
+		<th scope="col">Comments</th>
+		<th scope="col">Staff</th>
+		<th scope="col">Location</th>
+	
+	</tr>
+	</thead>
 
-<tbody>
+	<tbody>
 
-{% for item in report %}
-<tr>
-	<th scope="row">{{ item.entryid }}</th>
-	<td>{{ item.entrydate }}	</td>
-	<td>{{ item.shifttime }}	</td>
-	<td>{{ item.recount }} </td>
-	<td>{{ item.onec }}</td>
-	<td>{{ item.fivec }}</td>
-	<td>{{ item.tenc }}	</td>
-	<td>{{ item.twfvc }}	</td>
-	<td>{{ item.oned }}</td>
-	<td>{{ item.twod }}</td>
-	<td>{{ item.fived }}</td>
-	<td>{{ item.tend }}	</td>
-	<td>{{ item.twntd }}	</td>
-	<td>{{ item.totalcash }}	</td>
-	<td>{{ item.staffid }} </td>
-	<td>{{ item.locid }}</td>
-	<td> <button type="button" onclick="location.href='{% url 'reportitemedit' item.entryid %}'" class="btn btn-outline-secondary btn-sm">Edit</button> </td>
-	<td> <button type="button" value="{{ item.entryid }}" id="deleteEntry" class="btn btn-outline-danger btn-sm deleter" >Delete </button>  </td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
+	{% for item in ptpayreport %}
+	<tr>
+		<th scope="row">{{ item.entryidp }}</th>
+		<td>{{ item.datepay }}	</td>
+		<td>{{ item.ptidpay }} </td>
+		<td>{{ item.ptnamepay }}</td>
+		<td>{{ item.payitem }}</td>
+		<td>{{ item.paytype }}	</td>
+		<td>{{ item.amountpay }}	</td>
+		<td>{{ item.otherpay }}	</td>
+		<td>{{ item.staffid }}</td>
+		<td>{{ item.locid }} </td>
+		<td> <button type="button" onclick="location.href='{% url 'ptpayitemedit' item.entryidp %}'" class="btn btn-outline-secondary btn-sm">Edit</button> </td>
+		<td> <button type="button" value="{{ item.entryidp }}" id="deleteEntry" class="btn btn-outline-danger btn-sm deleter" >Delete</button> </td>
+	</tr>
+	{% endfor %}
+	</tbody>
+	</table >
 </body>
 
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -101,7 +89,7 @@
         </button>
       </div>
 	      <div class="modal-body">
-	     <form method = "post" id="deletepost" action="{% url 'deleteitem-cashlog' %}">
+	     <form method = "post" id="deletepost" action="{% url 'delete' %}">
 	     		{% csrf_token %}
 	     		Entry# to be Deleted:<input class="form-control" type="text" name="deletedID" id="deletedID" readonly/>
 	        	Password:<input class="form-control" type='password' name='password'/>
@@ -133,8 +121,28 @@
 	groupButtons = document.querySelectorAll(".deleter");
 
 	[].forEach.call(groupButtons, (element)=>{element.onclick= passWarn})         
+												
+				
+
+
+/*Patient pay item save entry button
+document.getElementById("deleteEntry").onclick=deletePatientPayEntryID;
+
+function deletePatientPayEntryID() {
+console.log('validate button is executing')
+var nameMessage = "";
+var validName = document.getElementById('id_staffname').value;
+
+if (validName == null || validName == "" )  {
+   nameMessage += "<font color='red'>Valid Name Required </font>";
+   document.getElementById("id_staffname").setAttribute('class', 'form-control is-invalid');
+   document.getElementById("namealert").innerHTML = nameMessage;
+
+ } else {
+  	document.getElementById("id_staffname").classList.remove('is-invalid');
+   	document.getElementById("namealert").innerHTML = nameMessage;
+   	document.getElementById('ptpayformupdate').submit();
+ }
+ }
+ */
 </script>
-
-
-
-</html>

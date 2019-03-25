@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Audit Page</title>
+</head>
+<body>
+<table>
+{% for item in results %}
+	<tr>
+		<td>Deletion Dat: {{ item.deletedate }}</td>
+		<td>Delete ID: {{ item.deletedentryid }}</td>
+		<td>Patient Pay Entry ID: {{ item.entryid }}</td>
+		<td>User: {{ item.superuser }}</td>
+		
+		<td>Details: {{ item.deletedentry}} </td>
+	</tr>
+{% endfor %}
+</table>
+</body>
+</html>

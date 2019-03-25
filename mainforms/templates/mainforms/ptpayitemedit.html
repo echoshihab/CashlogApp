@@ -17,60 +17,52 @@
 	<script src="{% static 'mainforms/scripts.js' %}"></script>
 
     <title>Item Edit</title>
+
 </head>
+
 <body>
-	<h3>Cashlog Entry ID# {{ itemid }} </h3>
-<form id='cashlogformupdate' action = "{% url 'clogItemEdit' itemid %}" method = 'post' novalidate>
+	<h3>Patient Pay Entry ID# {{ itemid }} </h3>
+<form id='ptpayformupdate' action = "{% url 'ptpayItemSubmit' itemid %}" method = 'post' novalidate>
 {% csrf_token %}
+
 <table class="table table-sm">
 <thead>
 <tr>
-	<th scope="col">Entry Date</th>
-	<th scope="col">Shift Time</th>
-	<th scope="col">Recount</th>
-	<th scope="col">Staff Name </th>
-	<th scope="col">Location</th>
+
+		<th scope="col">Entry Date</th>
+		<th scope="col">Staff</th>
+		<th scope="col">Location</th>
 </tr>
 
-
-<thead>
+</thead>
 
 <tbody>
 
 
 <tr>
-	<td>{{ form.entrydate }}	</td>
-	<td>{{ form.shifttime }}	</td>
-	<td>{{ form.recount }} </td>
+	<td>{{ form.datepay }} </td>
 	<td>{{ staff.staffname }} <small class="alert" id='namealert'></small> </td>
-	<td>{{ location.locname }}</td>
+	<td>{{ location.locname }} </td>
 </tr>
 
-	<tr>
-	<th scope="col">$0.01</th>
-	<th scope="col">$0.05</th>
-	<th scope="col">$0.10</th>
-	<th scope="col">$0.25</th>
-	<th scope="col">$1.00</th>
-	<th scope="col">$2.00</th>
-	<th scope="col">$5.00</th>
-	<th scope="col">$10.00</th>
-	<th scope="col">$20.00</th>
-	</tr>
-	<tr>
-	<td>{{ form.onec }}</td>
-	<td>{{ form.fivec }}</td>
-	<td>{{ form.tenc }}	</td>
-	<td>{{ form.twfvc }}	</td>
-	<td>{{ form.oned }}</td>
-	<td>{{ form.twod }}</td>
-	<td>{{ form.fived }}</td>
-	<td>{{ form.tend }}	</td>
-	<td>{{ form.twntd }}	</td>
-
-
+<tr>
+		<th scope="col">MRN</th>
+		<th scope="col">Patient Name</th>
+		<th scope="col">Payment Item</th>
+		<th scope="col">Payment Type</th>
+		<th scope="col">Amount</th>
+		
+</tr>
+<tr>
+	<td>{{ form.ptidpay }}	</td>
+	<td>{{ form.ptnamepay }} </td>
+	<td>{{ form.payitem }} </td>
+	<td>{{ form.paytype }}</td>
+	<td>{{ form.amountpay }} </td>
+	
 </tr>
 
+	
 </tbody>
 </table>
 <button id="updateSubmit" type="button" class="btn btn-secondary" name="Submit" value="updateSubmit">Save Entry</button>
@@ -79,10 +71,11 @@
 <div id='errors'> </div>
 
 <script>
-//Cashlog save entry button
-document.getElementById("updateSubmit").onclick=validateCashEntryID;
+//Patient pay item save entry button
+document.getElementById("updateSubmit").onclick=validatePatientPayEntryID;
 
-function validateCashEntryID() {
+function validatePatientPayEntryID() {
+console.log('validate button is executing')
 var nameMessage = "";
 var validName = document.getElementById('id_staffname').value;
 
@@ -94,9 +87,11 @@ if (validName == null || validName == "" )  {
  } else {
   	document.getElementById("id_staffname").classList.remove('is-invalid');
    	document.getElementById("namealert").innerHTML = nameMessage;
-   	document.getElementById('cashlogformupdate').submit();
+   	document.getElementById('ptpayformupdate').submit();
  }
  }
 </script>
+
 </body>
+
 </html>

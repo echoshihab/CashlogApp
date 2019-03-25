@@ -131,7 +131,45 @@ class PatientPayForm(forms.ModelForm):
         self.fields['otherpay'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
 
 # admin page forms for editing existing entries start below:
+class PatientPayUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Patientpay
+        fields =  [
+            "datepay",
+            "ptnamepay",
+            "ptidpay",
+            "otherpay",
+            "amountpay",
+            "payitem",
+            "paytype"
+            ]
 
+        labels = {
+            "datepay": "Date:",
+            "ptnamepay": "Patient Name:",
+            "ptidpay": "Patient ID/MRN:",
+            "otherpay": "Breakdown/Comment:",
+            "amountpay": "Payment Amount:",
+            "payitem": "Payment Item: ",
+            "paytype": "Payment Type: ",
+
+        }
+
+        widgets = {
+            "datepay": forms.DateInput(format='%m/%d/%Y', attrs={'class': 'datepickerupdate form-control', 'autocomplete': 'off', 'onkeydown': 'return false;', 'onpaste': 'return false;'}),
+            "payitem": forms.Select(choices=payitemChoices),
+            "paytype": forms.Select(choices=paytypeChoices),
+            "amountpay": forms.NumberInput({'class': 'form-control', 'autocomplete': 'off', 'onKeyPress': 'if(this.value.length==7) return false;', 'min': '0',
+                                            'oninput': 'validity.valid||(value= value.substr(0, value.length - 1));'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['ptnamepay'].widget.attrs.update({'class': 'form-control'})
+        self.fields['ptidpay'].widget.attrs.update({'class': 'form-control'})
+        self.fields['payitem'].widget.attrs.update({'class': 'form-control'})
+        self.fields['paytype'].widget.attrs.update({'class': 'form-control'})
+        self.fields['otherpay'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
 
 class CashentryUpdateForm(forms.ModelForm):
     # shifttime = forms.ChoiceField(label='Time:', choices=shiftChoices, widget=forms.RadioSelect())
