@@ -1,20 +1,88 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Audit Page</title>
-</head>
+	<head>
+		<title>Audit Page</title>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+		/>
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script src="{% static 'mainforms/scripts.js' %}"></script>
+	</head>
+
 <body>
-<table>
-{% for item in results %}
-	<tr>
-		<td>Deletion Dat: {{ item.deletedate }}</td>
-		<td>Delete ID: {{ item.deletedentryid }}</td>
-		<td>Patient Pay Entry ID: {{ item.entryid }}</td>
-		<td>User: {{ item.superuser }}</td>
+	<form id="auditForm" method="post" action="#">
+		{% csrf_token %}
+		<table>
+			<td>
+				<h3>Audit Type: {{auditForm.audit_type}}</h3>
+			</td>
+			<td>
+				<h3>Date From: {{auditForm.start_date}}</h3>
+			</td>
+			<td>
+				<h3>To: {{auditForm.end_date}}</h3>
+			</td>
+			<td>
+				<input
+					type="button"
+					class="btn btn-primary form-control"
+					value="Submit"
+					id="submitAuditSearch"
+				/>
+			</td>
+		</table>
+	</form>
+
+<div id="auditError" />
+
+<script>
+	//Patient pay item save entry button
+	document.getElementById("submitAuditSearch").onclick = validateAuditSearch;
+
+	function validateAuditSearch() {
+		var validateMessage = "";
+		var validStartDate = document.getElementById("id_start_date").value;
+		var validEndDate = document.getElementById("id_end_date").value;
+		var start_date = validStartDate.split('/');
+		var js_start_date = new Date(start_date[2], start_date[0] -1, start_date[1]);
+		var end_date = validEndDate.split('/');
+		var js_end_date = new Date(end_date[2], end_date[0] -1, end_date[1]);
+
+
+		if ((validStartDate == null || validStartDate == "") || (validEndDate == null || validEndDate == "")){
+			validateMessage += "<font color='red'>Valid Date Required</font>";
+			document.getElementById("auditError").innerHTML = validateMessage;
 		
-		<td>Details: {{ item.deletedentry}} </td>
-	</tr>
-{% endfor %}
-</table>
+		} 
+		else if (js_start_date > js_end_date ) {
+			validateMessage += "<font color='red'>To date cannot be earlier than from date </font>";
+			document.getElementById("auditError").innerHTML = validateMessage;
+		}
+
+		else {
+			validateMessage = "";
+			document.getElementById("auditError").innerHTML = validateMessage;
+			
+			document.getElementById('auditForm').submit();
+		}
+	}
+</script>
+
+
+
 </body>
+
+
+
 </html>
+
+<!-- tomorrow start with displaying forms properly -->

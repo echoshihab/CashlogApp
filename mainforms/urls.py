@@ -38,7 +38,7 @@ urlpatterns = [
     path('deleteitem-cashlog', views.deleteViewCashlog,
          name='deleteitem-cashlog'),  # for cashlog
     # audit- audit trail for deleted items below
-    path('audit', views.auditView, name='audit')
+    path('audit', views.auditView, name='audit'),
 
 
 ]

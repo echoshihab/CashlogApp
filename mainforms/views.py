@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.signals import user_logged_out
 from django.contrib import messages
 from .cashlogform import CashentryForm, EmployeeForm, LocationsForm, PatientPayForm, CashentryUpdateForm, EmployeeUpdateForm, LocationsUpdateForm, PatientPayUpdateForm
+from .auditform import AuditForm
 from .models import Cashentry, Employee, Locations, Patientpay, Audit
 from django.contrib.auth.hashers import check_password
 import datetime
@@ -405,8 +406,14 @@ def deleteViewCashlog(request):
 
 
 def auditView(request):
-    parameter = 'patientpay'
-    if parameter == 'patientpay':
-        results = Audit.objects.filter(
-            audittype='patientpay').order_by('-deletedate')
-        return render(request, 'mainforms/audit.html', {'results': results})
+    auditForm = AuditForm()
+    return render(request, 'mainforms/audit.html', {'auditForm': auditForm})
+    # elif parameter == 'patientpay':
+ #   results = Audit.objects.filter(
+  #      audittype='patientpay').order_by('-deletedate')
+   # return render(request, 'mainforms/audit-ptpay.html', {'results': results})
+    # elif parameter == 'cashlog':
+ #   results = Audit.objects.filter(
+  #      audittype='patientpay').order_by('-deletedate')
+   # return render(request, 'mainforms/audit-cashlog.html', {'results':
+   # results})
