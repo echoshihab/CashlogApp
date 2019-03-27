@@ -1,6 +1,5 @@
 # CashlogApp
-App to log cash/coins in cash boxes in multiple locations. The requirements have been determined in collaboration w/
-coordinator of relevant department and are listed below
+CRUD App to log cash/coins in cash boxes in multiple locations at beginning and end of shift The requirements have been determined in collaboration w/coordinator of relevant department and are listed below
 
 Completed:
 1. Allow receptionists from all sites  to enter # of coins/cash at the start and end of shift
@@ -9,7 +8,9 @@ Completed:
 4. Allow receptionists to resubmit data in case of error and indicate as such (without giving them edit permission)
 
 In progress:
-4. Allow coordinator/and or other designated superuser staff to view and edit at least last hundred entry
-
-Not Completed
+4. Allow coordinator/and or other designated superuser staff to log in to view and edit last hundred entry
 5. Audit trail for any changes made my coordinator/and or other superusers
+
+Not completed:
+-Finalize user interface for superusers 
+-Create form for searching audit trail
