@@ -5,9 +5,9 @@
 </head>
 <body>
 <table>
-{% for item in results %}
+{% for item in data %}
 	<tr>
-		<td>Deletion Dat: {{ item.deletedate }}</td>
+		<td>Deletion Date: {{ item.deletedate }}</td>
 		<td>Delete ID: {{ item.deletedentryid }}</td>
 		<td>Patient Pay Entry ID: {{ item.entryid }}</td>
 		<td>User: {{ item.superuser }}</td>

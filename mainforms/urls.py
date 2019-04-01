@@ -39,6 +39,7 @@ urlpatterns = [
          name='deleteitem-cashlog'),  # for cashlog
     # audit- audit trail for deleted items below
     path('audit', views.auditView, name='audit'),
+    path('auditpost', views.auditViewPost, name='auditpost')  # forposting audit
 
 
 ]

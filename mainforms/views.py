@@ -272,8 +272,6 @@ def clogitemupdateView(request, parameter):
 
     clogname = request.POST.get('staffname')
     cloglocation = request.POST.get('locname')
-    # this doesnn't appear to get used - clogConvertedDate =
-    # request.POST.get('entrydate')
     clogShifttime = request.POST.get('shifttime')
     recountValue = request.POST.get('recount')
     updateEntry = Cashentry.objects.filter(entryid=parameter)
@@ -302,21 +300,29 @@ def ptpayItemEditView(request, parameter):
     ptpayLocation = request.POST.get('locname')
     ptpayConvertedDate = request.POST.get(
         'datepay')  # this conversion happens in form
-    updateEntry = Patientpay.objects.filter(entryidp=parameter)
+    updateEntry = Patientpay.objects.filter(
+        entryidp=parameter)  # used for updating entry
+    auditEmpName = Employee.objects.get(
+        staffid=updateEntry[0].staffid).staffname
+    auditLocName = Locations.objects.get(locid=updateEntry[0].locid).locname
     checkEmployee = Employee.objects.filter(staffname=staffname)
     getLocation = Locations.objects.get(locname=ptpayLocation)
+    username = request.user
 
     if checkEmployee:
         getEmployee = Employee.objects.get(staffname=staffname)
-        updateEntry.update(datepay=postPtpayArray['datepay'], ptnamepay=postPtpayArray['ptnamepay'], ptidpay=postPtpayArray['ptidpay'], otherpay=postPtpayArray[
-                           'otherpay'], amountpay=postPtpayArray['amountpay'], staffid=getEmployee.staffid, locid=getLocation.locid, payitem=postPtpayArray['payitem'], paytype=postPtpayArray['paytype'])
-        return render(request, 'mainforms/test.html')
     else:
         Employee.objects.create(staffname=staffname)
         getEmployee = Employee.objects.get(staffname=staffname)
-        updateEntry.update(datepay=postPtpayArray['datepay'], ptnamepay=postPtpayArray['ptnamepay'], ptidpay=postPtpayArray['ptidpay'], otherpay=postPtpayArray[
-                           'otherpay'], amountpay=postPtpayArray['amountpay'], staffid=getEmployee.staffid, locid=getLocation.locid, payitem=postPtpayArray['payitem'], paytype=postPtpayArray['paytype'])
-        return render(request, 'mainforms/test.html')
+
+    auditMessage = f'Modified patient pay entry, previous values were: Date:{updateEntry[0].datepay} Staffname:{auditEmpName} location:{auditLocName} \
+            Patient Name: {updateEntry[0].ptnamepay} Patient ID: {updateEntry[0].ptidpay}  Payment Item: {updateEntry[0].payitem} Payment Type: {updateEntry[0].paytype} Amount: {updateEntry[0].amountpay}  comment: {updateEntry[0].otherpay}'
+    Audit.objects.create(superuser=username, deletedentry=auditMessage,
+                         deletedentryid=updateEntry[0].entryidp, audittype='patientpay')
+
+    updateEntry.update(datepay=postPtpayArray['datepay'], ptnamepay=postPtpayArray['ptnamepay'], ptidpay=postPtpayArray['ptidpay'], otherpay=postPtpayArray[
+                       'otherpay'], amountpay=postPtpayArray['amountpay'], staffid=getEmployee.staffid, locid=getLocation.locid, payitem=postPtpayArray['payitem'], paytype=postPtpayArray['paytype'])
+    return render(request, 'mainforms/test.html')
 
 
 def superUserview(request):
@@ -417,3 +423,21 @@ def auditView(request):
   #      audittype='patientpay').order_by('-deletedate')
    # return render(request, 'mainforms/audit-cashlog.html', {'results':
    # results})
+
+
+def auditViewPost(request):
+    auditform = AuditForm(request.POST)
+    if AuditForm().is_valid:
+        startdate = request.POST.get('start_date')
+        enddate = request.POST.get('end_date')
+        audittype = request.POST.get('audit_type')
+        formatStartDate = datetime.datetime.strptime(
+            startdate, "%m/%d/%Y").strftime("%Y-%m-%d")
+        formatEndDate = datetime.datetime.strptime(
+            enddate, "%m/%d/%Y").strftime("%Y-%m-%d")
+
+        filteredResults = Audit.objects.filter(audittype=audittype,
+                                               deletedate__range=[formatStartDate, formatEndDate])
+        return render(request, 'mainforms/audit-ptpay.html', {'data': filteredResults})
+    else:
+        return render(request, 'mainforms/audit-ptpay.html', {'data': audittype})

@@ -1,6 +1,6 @@
 from django import forms
 
-auditChoices = [(1, 'Cashlog'), (2, 'Patient Pay')]
+auditChoices = [('cashlog', 'Cashlog'), ('patientpay', 'Patient Pay')]
 
 
 class AuditForm(forms.Form):

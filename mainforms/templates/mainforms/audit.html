@@ -19,7 +19,7 @@
 	</head>
 
 <body>
-	<form id="auditForm" method="post" action="#">
+	<form id="auditForm" method="post" action="{% url 'auditpost' %}">
 		{% csrf_token %}
 		<table>
 			<td>
