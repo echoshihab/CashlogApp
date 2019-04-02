@@ -270,13 +270,29 @@ def clogitemupdateView(request, parameter):
     errorsEform = EmployeeUpdateForm(request.POST).errors
     errorsLform = LocationsUpdateForm(request.POST).errors
 
-    clogname = request.POST.get('staffname')
+    staffname = request.POST.get('staffname')
     cloglocation = request.POST.get('locname')
     clogShifttime = request.POST.get('shifttime')
     recountValue = request.POST.get('recount')
     updateEntry = Cashentry.objects.filter(entryid=parameter)
-    getEmployee = Employee.objects.get(staffname=clogname)
+    checkEmployee = Employee.objects.filter(staffname=staffname)
     getLocation = Locations.objects.get(locname=cloglocation)
+    if checkEmployee:
+        getEmployee = Employee.objects.get(staffname=staffname)
+    else:
+        Employee.objects.create(staffname=staffname)
+        getEmployee = Employee.objects.get(staffname=staffname)
+
+    auditEmpName = Employee.objects.get(
+        staffid=updateEntry[0].staffid).staffname
+    auditLocName = Locations.objects.get(locid=updateEntry[0].locid).locname
+    formType = 'cashlog'
+    username = request.user
+
+    auditMessage = f'Modified cash log entry with following values: Date:{updateEntry[0].entrydate} Staffname:{auditEmpName} location: {auditLocName} \
+            $.01:{updateEntry[0].onec} $.05:{updateEntry[0].fivec} $.1:{updateEntry[0].tenc} $.25:{updateEntry[0].twfvc} $1:{updateEntry[0].oned} $5:{updateEntry[0].fived} $10:{updateEntry[0].tend} $20:{updateEntry[0].twntd} Total Cash: {updateEntry[0].totalcash} Recount: {updateEntry[0].recount}'
+    Audit.objects.create(superuser=username, modifiedentry=auditMessage,
+                         modifiedentryid=updateEntry[0].entryid, audittype=formType)
 
     # this function takes the request.post array and sets all null cash values
     # to 0 or converts it to float
@@ -317,8 +333,8 @@ def ptpayItemEditView(request, parameter):
 
     auditMessage = f'Modified patient pay entry, previous values were: Date:{updateEntry[0].datepay} Staffname:{auditEmpName} location:{auditLocName} \
             Patient Name: {updateEntry[0].ptnamepay} Patient ID: {updateEntry[0].ptidpay}  Payment Item: {updateEntry[0].payitem} Payment Type: {updateEntry[0].paytype} Amount: {updateEntry[0].amountpay}  comment: {updateEntry[0].otherpay}'
-    Audit.objects.create(superuser=username, deletedentry=auditMessage,
-                         deletedentryid=updateEntry[0].entryidp, audittype='patientpay')
+    Audit.objects.create(superuser=username, modifiedentry=auditMessage,
+                         modifiedentryid=updateEntry[0].entryidp, audittype='patientpay')
 
     updateEntry.update(datepay=postPtpayArray['datepay'], ptnamepay=postPtpayArray['ptnamepay'], ptidpay=postPtpayArray['ptidpay'], otherpay=postPtpayArray[
                        'otherpay'], amountpay=postPtpayArray['amountpay'], staffid=getEmployee.staffid, locid=getLocation.locid, payitem=postPtpayArray['payitem'], paytype=postPtpayArray['paytype'])
@@ -360,8 +376,8 @@ def deleteView(request):
 
             auditMessage = f'deleted patient pay entry with the following values: Date:{ptpaydate} Staffname:{employeeName} location:{locationName} \
             Patient Name: {patientname} Patient ID: {patientid}  Payment Item: {ptpayitem} Payment Type: {ptpayType} Amount: {ptpayAmount}  comment: {comments}'
-            Audit.objects.create(superuser=username, deletedentry=auditMessage,
-                                 deletedentryid=ptpayEntryId, audittype=formType)
+            Audit.objects.create(superuser=username, modifiedentry=auditMessage,
+                                 modifiedentryid=ptpayEntryId, audittype=formType)
             ptPayObject.delete()
 
             return render(request, 'mainforms/deleteItem.html', {'passMessage': successMessage, 'test': auditMessage})
@@ -404,8 +420,8 @@ def deleteViewCashlog(request):
 
             auditMessage = f'deleted cash log entry with following values: Date:{entrydateVal} Staffname:{employeeName} location: {locationName} \
             $.01:{onecVal} $.05:{fivecVal} $.1:{tencVal} $.25:{twfvcVal} $1:{onedVal} $5:{fivedVal} $10:{tendVal} $20:{twntdVal} Total Cash: {totalcashVal} Recount: {recountVal}'
-            Audit.objects.create(superuser=username, deletedentry=auditMessage,
-                                 deletedentryid=cashlogEntryId, audittype=formType)
+            Audit.objects.create(superuser=username, modifiedentry=auditMessage,
+                                 modifiedentryid=cashlogEntryId, audittype=formType)
             cashentryObject.delete()
 
             return render(request, 'mainforms/deleteItem.html', {'passMessage': auditMessage})
@@ -437,7 +453,7 @@ def auditViewPost(request):
             enddate, "%m/%d/%Y").strftime("%Y-%m-%d")
 
         filteredResults = Audit.objects.filter(audittype=audittype,
-                                               deletedate__range=[formatStartDate, formatEndDate])
+                                               modifieddate__range=[formatStartDate, formatEndDate])
         return render(request, 'mainforms/audit-ptpay.html', {'data': filteredResults})
     else:
         return render(request, 'mainforms/audit-ptpay.html', {'data': audittype})

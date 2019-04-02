@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+
 	<title>Audit Page</title>
 </head>
 <body>
-<table>
+<table class="table table-sm">
+<thead>
+<tr>
+	
+	<th scope="col">Modified On</th>
+	<th scope="col">Modified By</th>
+	<th scope="col">Audit Type</th>
+	<th scope="col">Modified ID#</th>
+	<th scope="col">Details</th>
+
+	<th scope="col"></th>
+</tr>
+<thead>
+
+<tbody>
+
 {% for item in data %}
-	<tr>
-		<td>Deletion Date: {{ item.deletedate }}</td>
-		<td>Delete ID: {{ item.deletedentryid }}</td>
-		<td>Patient Pay Entry ID: {{ item.entryid }}</td>
-		<td>User: {{ item.superuser }}</td>
-		
-		<td>Details: {{ item.deletedentry}} </td>
-	</tr>
+<tr>
+
+	<td>{{ item.modifieddate }}	</td>
+	<td>{{ item.superuser }}	</td>
+	<td>{{ item.audittype }} </td>
+	<td>{{ item.modifiedentryid }}</td>
+	<td>{{ item.modifiedentry }}</td>
+	
+</tr>
 {% endfor %}
+</tbody>
 </table>
 </body>
 </html>
+
+

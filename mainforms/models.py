@@ -81,16 +81,17 @@ class Patientpay(models.Model):
         managed = False
         db_table = 'patientpay'
 
+# this audit below is for patient pay form
+
 
 class Audit(models.Model):
     entryid = models.AutoField(primary_key=True)
     # for holding superuser name
     superuser = models.CharField(default='admin', max_length=200)
     # for holding date of deletion
-    deletedate = models.DateField(auto_now=True, null=True)
-    deletedentryid = models.IntegerField(
+    modifieddate = models.DateField(auto_now=True, null=True)
+    modifiedentryid = models.IntegerField(
         null=True)  # for the id# of item deleted
     audittype = models.CharField(
         default='none', max_length=100)  # cashlog vs patientpay
-    # complete informmation for tables. im
-    deletedentry = models.CharField(max_length=200)
+    modifiedentry = models.CharField(max_length=200)
