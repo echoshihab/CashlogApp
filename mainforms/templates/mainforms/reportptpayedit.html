@@ -10,7 +10,8 @@
 	
 	
 
-    <title>Patient Pay Report</title>
+    <title>Superuser Pages</title>
+
 
 </head>
 
@@ -18,21 +19,21 @@
 <body>
 
 	<div>
-	<ul class="nav justify-content-end">
-	   <li class="nav-item">
-	    <a class="nav-link active" href="{% url 'superuser' %}"> Super User Page </a>
-	  </li>
-	  <li class="nav-item">
-	    	<a class="nav-link active" href="{% url 'reportedit' %}">Cash Log Edit</a>
-	  </li>
-	  <li class="nav-item">
-	    <a class="nav-link disabled" href="{% url 'ptpayedit' %}">Patient Pay Edit</a>
-	  </li>
-	  <li class="nav-item">
-	    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-	  </li>
-	 
-	</ul>
+		<ul class="nav justify-content-end">
+		   <li class="nav-item">
+		    <a class="nav-link active" href="{% url 'superuser' %}"> Super User Page </a>
+		  </li>
+		  <li class="nav-item">
+		    	<a class="nav-link active" href="{% url 'reportedit' %}">Cash Log Edit</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link disabled" href="{% url 'ptpayedit' %}">Patient Pay Edit</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+		  </li>
+		 
+		</ul>
 
 	<h3>
 	  Patient Pay Edit
@@ -92,7 +93,7 @@
 	     <form method = "post" id="deletepost" action="{% url 'delete' %}">
 	     		{% csrf_token %}
 	     		Entry# to be Deleted:<input class="form-control" type="text" name="deletedID" id="deletedID" readonly/>
-	        	Password:<input class="form-control" type='password' name='password'/>
+	        	Enter Password again to confirm:<input class="form-control" type='password' name='password'/>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

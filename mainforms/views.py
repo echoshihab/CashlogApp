@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.signals import user_logged_out
 from django.contrib import messages
+from django.dispatch import receiver
+from django.contrib.auth.decorators import login_required
 from .cashlogform import CashentryForm, EmployeeForm, LocationsForm, PatientPayForm, CashentryUpdateForm, EmployeeUpdateForm, LocationsUpdateForm, PatientPayUpdateForm
 from .auditform import AuditForm
 from .models import Cashentry, Employee, Locations, Patientpay, Audit
@@ -8,15 +10,14 @@ from django.contrib.auth.hashers import check_password
 import datetime
 
 
-def logoutUser(sender, request, **kwargs):
-    messages.SUCCESS(request, 'You have been logged out!')
-
-
 # basline form page
+@receiver(user_logged_out)
+def log_out_message(request, **kwargs):
+    messages.info(request, 'You have been logged out.')
 
 
 def cform(request):
-    user_logged_out.connect(logoutUser)
+    user_logged_out.connect(log_out_message)
 
     cashForm = CashentryForm()
     employFormc = EmployeeForm(prefix='cashlog')
@@ -138,13 +139,12 @@ def ptpayFormView(request):
 
         if checkEmployee:
             getEmployee = Employee.objects.get(staffname=ptpayName)
-            Patientpay.objects.create(datepay=ptpayConvertedDate, ptnamepay=ptpayPatientName, ptidpay=ptpayPaitentID, otherpay=ptpayBreakdown,
-                                      amountpay=ptpayAmount, staffid=getEmployee.staffid, locid=getLocation.locid, payitem=ptpayPayItem, paytype=ptpayPayType)
         else:
             Employee.objects.create(staffname=ptpayName)
             getEmployee = Employee.objects.get(staffname=ptpayName)
-            Patientpay.objects.create(datepay=ptpayConvertedDate, ptnamepay=ptpayPatientName, ptidpay=ptpayPaitentID, otherpay=ptpayBreakdown,
-                                      amountpay=ptpayAmount, staffid=getEmployee.staffid, locid=getLocation.locid, payitem=ptpayPayItem, paytype=ptpayPayType)
+
+        Patientpay.objects.create(datepay=ptpayConvertedDate, ptnamepay=ptpayPatientName, ptidpay=ptpayPaitentID, otherpay=ptpayBreakdown,
+                                  amountpay=ptpayAmount, staffid=getEmployee.staffid, locid=getLocation.locid, payitem=ptpayPayItem, paytype=ptpayPayType)
 
     return render(request, 'mainforms/test.html', {'test': locformerrors})
 
@@ -209,6 +209,7 @@ def resultViewPtpay(request, parameter='none'):
 # parameter
 
 
+@login_required
 def resultViewPtpayEdit(request, parameter='none'):
     if parameter == 'none':
         last_hundred_ptpaymsges = Patientpay.objects.all(
@@ -236,6 +237,7 @@ def resultViewPtpayEdit(request, parameter='none'):
 # clicked it takes you to the item edit mode
 
 
+@login_required
 def reporteditView(request, parameter='none'):
     if parameter == 'none':
         last_hundred_msges = Cashentry.objects.all(
@@ -262,6 +264,7 @@ def reporteditView(request, parameter='none'):
 # this view below deals with cashentry item update request
 
 
+@login_required
 def clogitemupdateView(request, parameter):
     cashFormUpdate = CashentryUpdateForm(request.POST)
     employFormUpdate = EmployeeUpdateForm(request.POST)
@@ -306,6 +309,7 @@ def clogitemupdateView(request, parameter):
     return render(request, 'mainforms/test.html', {'test': errorsCform})
 
 
+@login_required
 def ptpayItemEditView(request, parameter):
     ptpayFormUpdate = PatientPayUpdateForm(request.POST)
     employFormUpdate = EmployeeUpdateForm(request.POST)
@@ -341,6 +345,7 @@ def ptpayItemEditView(request, parameter):
     return render(request, 'mainforms/test.html')
 
 
+@login_required
 def superUserview(request):
     if request.user.is_authenticated:
         username = request.user.username
@@ -350,6 +355,7 @@ def superUserview(request):
     return render(request, 'mainforms/superuser.html')
 
 
+@login_required
 def deleteView(request):
     successMessage = 'Item is now deleted'
     notSuccessMessage = 'Password Incorrect'
@@ -388,6 +394,7 @@ def deleteView(request):
         return render(request, 'mainforms/deleteItem.html', {'passMessage': notSuccessMessage})
 
 
+@login_required
 def deleteViewCashlog(request):
     successMessage = 'Item is now deleted'
     notSuccessMessage = 'Password Incorrect'
@@ -427,9 +434,13 @@ def deleteViewCashlog(request):
             return render(request, 'mainforms/deleteItem.html', {'passMessage': auditMessage})
 
 
+@login_required
 def auditView(request):
-    auditForm = AuditForm()
-    return render(request, 'mainforms/audit.html', {'auditForm': auditForm})
+    if request.user.username == 'admin':
+        auditForm = AuditForm()
+        return render(request, 'mainforms/audit.html', {'auditForm': auditForm})
+    else:
+        return render(request, 'mainforms/unauthorized.html')
     # elif parameter == 'patientpay':
  #   results = Audit.objects.filter(
   #      audittype='patientpay').order_by('-deletedate')
@@ -441,6 +452,7 @@ def auditView(request):
    # results})
 
 
+@login_required
 def auditViewPost(request):
     auditform = AuditForm(request.POST)
     if AuditForm().is_valid:

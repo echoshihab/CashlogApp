@@ -4,6 +4,8 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<title>Report Edit</title>
 
+
+
 </head>
 <body>
 	{% if messages %}
@@ -14,26 +16,38 @@
 
 	{% endif %}
 
-	<div class="row">
-	  <div class="col-sm-6">
-	    <div class="card">
+	
+
+	
+	 
+	    <div class="card text-center">
 	      <div class="card-body">
 	        <h5 class="card-title">Cashlog Report </h5>
 	        <a href="{% url 'reportedit' %}" class="btn btn-primary">Edit</a>
 	      </div>
 	    </div>
-	  </div>
-	  <div class="col-sm-6">
-	    <div class="card">
+	 
+
+	    <div class="card text-center">
 	      <div class="card-body">
 	        <h5 class="card-title">Patient Pay Report</h5>
 	        <a href="{% url 'ptpayedit' %}" class="btn btn-primary">Edit</a>
 	      </div>
 	    </div>
-	  </div>
-	</div>
+	
 
-{% block content %} {% endblock %}
+	  
+	   
+	    <div style="margin-left:48%;margin-top:10px">
+	    	<a href="{% url 'logout' %}" id="logout-btn" class="btn btn-outline-dark ">Log out</a>
+	    <div>
+	
+	
+	
+
+
+
+
 
 </body>
 </html>
