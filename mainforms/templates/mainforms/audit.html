@@ -21,25 +21,34 @@
 <body>
 	<form id="auditForm" method="post" action="{% url 'auditpost' %}">
 		{% csrf_token %}
-		<table>
-			<td>
-				<h3>Audit Type: {{auditForm.audit_type}}</h3>
-			</td>
-			<td>
-				<h3>Date From: {{auditForm.start_date}}</h3>
-			</td>
-			<td>
-				<h3>To: {{auditForm.end_date}}</h3>
-			</td>
-			<td>
+			<div class="form-group row" style="margin-left:5px">
+			
+			<div class="col-sm-20">
+
+				Audit Type: {{auditForm.audit_type}}
+			</div>
+			
+			
+		
+			<div class="col-sm-20">
+			
+				Date From: {{auditForm.start_date}}
+			</div>
+			<div class="col-sm-20">
+				Date To: {{auditForm.end_date}}
+			</div>
+		</div>
+
+			
 				<input
 					type="button"
-					class="btn btn-primary form-control"
+					class="btn btn-primary"
 					value="Submit"
 					id="submitAuditSearch"
+					style="margin-left:5px"
+
 				/>
-			</td>
-		</table>
+		
 	</form>
 
 <div id="auditError" />
