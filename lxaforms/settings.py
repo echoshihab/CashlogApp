@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'test_without_migrations',
     'users.apps.UsersConfig',
     'mainforms.apps.MainformsConfig',
     'crispy_forms',
@@ -132,3 +133,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'superuser'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'mainpage'
+
+TEST_RUNNER = 'mainforms.utils.UnManagedModelTestRunner'
