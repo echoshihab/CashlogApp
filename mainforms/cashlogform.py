@@ -2,12 +2,21 @@ from django import forms
 
 from .models import Cashentry, Employee, Locations, Patientpay
 
-shiftChoices = [('Start of Shift', 'Start of Shift'), ('End of Shift', 'End of Shift')]
+
+shiftChoices = [('Start of Shift', 'Start of Shift'),  # radio select choices for cashlog form
+                ('End of Shift', 'End of Shift')]
+# recount checkbox for cashlog form
 recountChoices = [('Yes', 'Yes'), ('No', 'No')]
 
 
+# this function below is for adding attributes to form fields
+def widgetAddCashAttr(cash_list, cash_widget):
+    for item in cash_list[0:9]:
+        cash_widget[item] = forms.NumberInput({'class': 'form-control', 'autocomplete': 'off', 'onKeyPress': 'if(this.value.length==3) return false;', 'min': '1', 'step': '1',
+                                               'onkeydown': 'return (event.keyCode!=190 && event.keyCode!=110 );', 'oninput': 'validity.valid||(value= value.substr(0, value.length - 1));'})
+
+
 class CashentryForm(forms.ModelForm):
-    # shifttime = forms.ChoiceField(label='Time:', choices=shiftChoices, widget=forms.RadioSelect())
 
     class Meta:
         model = Cashentry
@@ -43,16 +52,17 @@ class CashentryForm(forms.ModelForm):
             "shifttime": forms.RadioSelect(choices=shiftChoices),
             "entrydate": forms.DateInput({'class': 'datepicker form-control', 'autocomplete': 'off', 'onkeydown': 'return false;', 'onpaste': 'return false;'}),
             "recount": forms.CheckboxInput(),
-            
+
         }
-        def widgetAddCashAttr(cash_list, cash_widget):
-            for item in cash_list[0:9]:
-                cash_widget[item] = forms.NumberInput({'class': 'form-control', 'autocomplete': 'off', 'onKeyPress': 'if(this.value.length==3) return false;', 'min': '1', 'step': '1',
-                                       'onkeydown': 'return (event.keyCode!=190 && event.keyCode!=110 );', 'oninput': 'validity.valid||(value= value.substr(0, value.length - 1));'})
-        widgetAddCashAttr(fields,widgets)
+
+        # execute the above function so that all of cash value fields have the
+        # the class of form-control and autocomplete
+        widgetAddCashAttr(fields, widgets)
+        # is turned off etc.
 
 
 class EmployeeForm(forms.ModelForm):
+
     class Meta:
         model = Employee
         fields = [
@@ -67,11 +77,11 @@ class EmployeeForm(forms.ModelForm):
         }
 
 
-locChoices = [('Boler', 'Boler'), ('Bradley', 'Bradley'), ('Central', 'Central'), ('Dundas', 'Dundas'), ('Springbank', 'Springbank')]
+locChoices = [('Boler', 'Boler'), ('Bradley', 'Bradley'), ('Central',
+                                                           'Central'), ('Dundas', 'Dundas'), ('Springbank', 'Springbank')]
 
 
 class LocationsForm(forms.ModelForm):
-    # locname = forms.ChoiceField(label='Locations:', choices=locChoices, widget=forms.RadioSelect()
 
     class Meta:
         model = Locations
@@ -86,7 +96,8 @@ class LocationsForm(forms.ModelForm):
         }
 
 
-payitemChoices = [('none', 'None'), ('CD', 'CD'), ('USB', 'USB'), ('Report', 'Report'), ('CD & Report', 'CD & Report'), ('Parking', 'Parking'), ('Petty Cash', 'Petty Cash'), ('Exam', 'Exam')]
+payitemChoices = [('none', 'None'), ('CD', 'CD'), ('USB', 'USB'), ('Report', 'Report'), ('CD & Report',
+                                                                                         'CD & Report'), ('Parking', 'Parking'), ('Petty Cash', 'Petty Cash'), ('Exam', 'Exam')]
 
 paytypeChoices = [('none', 'None'), ('CASH', 'CASH'), ('DEBIT', 'DEBIT'),
                   ('MASTERCARD', 'MASTERCARD'), ('VISA', 'VISA')]
@@ -128,13 +139,17 @@ class PatientPayForm(forms.ModelForm):
         self.fields['ptidpay'].widget.attrs.update({'class': 'form-control'})
         self.fields['payitem'].widget.attrs.update({'class': 'form-control'})
         self.fields['paytype'].widget.attrs.update({'class': 'form-control'})
-        self.fields['otherpay'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+        self.fields['otherpay'].widget.attrs.update(
+            {'class': 'form-control', 'autocomplete': 'off'})
 
 # admin page forms for editing existing entries start below:
+
+
 class PatientPayUpdateForm(forms.ModelForm):
+
     class Meta:
         model = Patientpay
-        fields =  [
+        fields = [
             "datepay",
             "ptnamepay",
             "ptidpay",
@@ -142,7 +157,7 @@ class PatientPayUpdateForm(forms.ModelForm):
             "amountpay",
             "payitem",
             "paytype"
-            ]
+        ]
 
         labels = {
             "datepay": "Date:",
@@ -169,10 +184,11 @@ class PatientPayUpdateForm(forms.ModelForm):
         self.fields['ptidpay'].widget.attrs.update({'class': 'form-control'})
         self.fields['payitem'].widget.attrs.update({'class': 'form-control'})
         self.fields['paytype'].widget.attrs.update({'class': 'form-control'})
-        self.fields['otherpay'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+        self.fields['otherpay'].widget.attrs.update(
+            {'class': 'form-control', 'autocomplete': 'off'})
+
 
 class CashentryUpdateForm(forms.ModelForm):
-    # shifttime = forms.ChoiceField(label='Time:', choices=shiftChoices, widget=forms.RadioSelect())
 
     class Meta:
         model = Cashentry
@@ -210,11 +226,8 @@ class CashentryUpdateForm(forms.ModelForm):
             "recount": forms.Select(choices=recountChoices),
 
         }
-        def widgetAddCashAttr(cash_list, cash_widget):
-            for item in cash_list[0:9]:
-                cash_widget[item] = forms.NumberInput({'class': 'form-control', 'autocomplete': 'off', 'onKeyPress': 'if(this.value.length==3) return false;', 'min': '1', 'step': '1',
-                                       'onkeydown': 'return (event.keyCode!=190 && event.keyCode!=110 );', 'oninput': 'validity.valid||(value= value.substr(0, value.length - 1));'})
-        widgetAddCashAttr(fields,widgets)
+
+        widgetAddCashAttr(fields, widgets)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -223,6 +236,7 @@ class CashentryUpdateForm(forms.ModelForm):
 
 
 class EmployeeUpdateForm(forms.ModelForm):
+
     class Meta:
         model = Employee
         fields = [
@@ -242,7 +256,8 @@ class EmployeeUpdateForm(forms.ModelForm):
 
 
 class LocationsUpdateForm(forms.ModelForm):
-    # locname = forms.ChoiceField(label='Locations:', choices=locChoices, widget=forms.RadioSelect()
+    # locname = forms.ChoiceField(label='Locations:', choices=locChoices,
+    # widget=forms.RadioSelect()
 
     class Meta:
         model = Locations

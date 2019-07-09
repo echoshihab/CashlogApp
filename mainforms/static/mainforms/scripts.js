@@ -18,8 +18,6 @@ $(function(){
 });
 
 //auditdate is for audit search page
-
-
 $(function(){
     $(".auditdate").datepicker();
 });

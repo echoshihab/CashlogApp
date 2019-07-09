@@ -118,7 +118,8 @@ if (errorCounter == 0 ) {
 
 
 $("#cModal").modal({backdrop: 'static', keyboard: false}) ;
-// showing values on modal
+
+// logic for showing values in the modal below
 
 document.getElementById("test").innerHTML = "";
 
@@ -304,7 +305,7 @@ $("#pModal").modal({backdrop: 'static', keyboard: false}) ;
 
 document.getElementById("ptpayPreSubmission").innerHTML = "";
 
-// fixing ptpayform
+// logic for showing values in the modal below
 var ptpayModal= document.createElement("div");
 ptpayModal.className = ('container')
 

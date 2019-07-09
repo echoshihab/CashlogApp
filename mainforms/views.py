@@ -7,13 +7,17 @@ from .cashlogform import CashentryForm, EmployeeForm, LocationsForm, PatientPayF
 from .auditform import AuditForm
 from .models import Cashentry, Employee, Locations, Patientpay, Audit
 from django.contrib.auth.hashers import check_password
+from .helpers import cashArrayPost, patientPayPost
 import datetime
 
+# user log out message
 
-# basline form page
+
 @receiver(user_logged_out)
 def log_out_message(request, **kwargs):
     messages.info(request, 'You have been logged out.')
+
+# basline form page
 
 
 def cform(request):
@@ -37,48 +41,6 @@ def cform(request):
 
     return render(request, 'mainforms/cashlog.html', context)
 
-# usage -this function below will be reused in any views that require post values from cashform
-# purpose-  takes the post cashform values and prepares them for insertion
-# to database
-
-
-def cashArrayPost(postrequest):
-    cashDict = {}
-    cashArray = ['onec', 'fivec', 'tenc', 'twfvc', 'oned', 'twod',
-                 'fived', 'tend', 'twntd', 'recount', 'entrydate', 'shifttime']
-    pureCash = cashArray[:9]
-    for item in cashArray:
-        cashDict[item] = postrequest.get(item)
-
-    if (cashDict['recount'] == '') or (cashDict['recount'] is None):
-        cashDict['recount'] = 'No'
-    else:
-        cashDict['recount'] = 'Yes'
-    cashDict['entrydate'] = datetime.datetime.strptime(
-        cashDict['entrydate'], '%m/%d/%Y')
-
-    for key in pureCash:
-        if (cashDict[key] == '') or (cashDict[key] is None):
-            cashDict[key] = 0
-        else:
-            cashDict[key] = float(cashDict[key])
-    return cashDict
-
-# usage - this function below can be reused for any patientpay view
-# requiring post values from ptpay form
-
-
-def patientPayPost(postrequest):
-    ptpayDict = {}
-    ptpayArray = ['datepay', 'ptnamepay', 'ptidpay', 'otherpay',
-                  'amountpay', 'payitem', 'payitem', 'paytype']
-    for item in ptpayArray:
-        ptpayDict[item] = postrequest.get(item)
-
-    ptpayDict['datepay'] = datetime.datetime.strptime(
-        ptpayDict['datepay'], '%m/%d/%Y')
-    return ptpayDict
-
 
 # this view below deals with cashlog form submit request
 def clogFormView(request):
@@ -98,19 +60,20 @@ def clogFormView(request):
             postCashArray['oned'] * 1) + (postCashArray['twod'] * 2) + (postCashArray['fived'] * 5) + (postCashArray['tend'] * 10) + (postCashArray['twntd'] * 20)
         clogRoundedTotalCash = round(clogTotalcash, 2)
 
+        # if employee exists in employee table, insert data
         if checkEmployee:
             getEmployee = Employee.objects.get(staffname=clogname)
             Cashentry.objects.create(onec=postCashArray['onec'], fivec=postCashArray['fivec'], tenc=postCashArray['tenc'], twfvc=postCashArray['twfvc'], oned=postCashArray['oned'], twod=postCashArray['twod'], fived=postCashArray['fived'], tend=postCashArray['tend'], twntd=postCashArray['twntd'], staffid=getEmployee.staffid, locid=getLocation.locid, shifttime=postCashArray['shifttime'], entrydate=postCashArray['entrydate'],
                                      totalcash=clogRoundedTotalCash, recount=postCashArray['recount'])
-        else:
+        else:  # else - create employee first and then insert data to the table
             Employee.objects.create(staffname=clogname)
             getEmployee = Employee.objects.get(staffname=clogname)
             Cashentry.objects.create(onec=postCashArray['onec'], fivec=postCashArray['fivec'], tenc=postCashArray['tenc'], twfvc=postCashArray['twfvc'], oned=postCashArray['oned'], twod=postCashArray['twod'], fived=postCashArray['fived'], tend=postCashArray['tend'], twntd=postCashArray['twntd'], staffid=getEmployee.staffid, locid=getLocation.locid, shifttime=postCashArray['shifttime'], entrydate=postCashArray['entrydate'],
                                      totalcash=clogRoundedTotalCash, recount=postCashArray['recount'])
 
-        return render(request, 'mainforms/test.html', {'test2': cashformerrors})
+        return render(request, 'mainforms/postsubmit.html', {'cashlog_errors': cashformerrors})
     else:
-        return render(request, 'mainforms/test.html', {'test2': cashformerrors})
+        return render(request, 'mainforms/postsubmit.html', {'cashlog_errors': cashformerrors})
 
 # this view below deals with patient pay form submit request
 
@@ -119,7 +82,7 @@ def ptpayFormView(request):
     ptPayForm = PatientPayForm(request.POST)
     employFormp = EmployeeForm(request.POST, prefix='ptpay')
     locFormp = LocationsForm(request.POST, prefix='ptpay')
-    locformerrors = LocationsForm(prefix='ptpay').errors
+    ptpayFormErrors = PatientPayForm(request.POST).errors
 
     if ptPayForm.is_valid() and employFormp.is_valid() and locFormp.is_valid():
         ptpayName = request.POST.get('ptpay-staffname')
@@ -137,16 +100,16 @@ def ptpayFormView(request):
         ptpayConvertedDate = datetime.datetime.strptime(
             ptpayEntryDate, '%m/%d/%Y')
 
-        if checkEmployee:
+        if checkEmployee:  # if employee exists in employee table, insert data
             getEmployee = Employee.objects.get(staffname=ptpayName)
-        else:
+        else:  # else - create employee first and then insert data to the table
             Employee.objects.create(staffname=ptpayName)
             getEmployee = Employee.objects.get(staffname=ptpayName)
 
         Patientpay.objects.create(datepay=ptpayConvertedDate, ptnamepay=ptpayPatientName, ptidpay=ptpayPaitentID, otherpay=ptpayBreakdown,
                                   amountpay=ptpayAmount, staffid=getEmployee.staffid, locid=getLocation.locid, payitem=ptpayPayItem, paytype=ptpayPayType)
 
-    return render(request, 'mainforms/test.html', {'test': locformerrors})
+    return render(request, 'mainforms/postsubmit.html', {'ptpay_errors': ptpayFormErrors})
 
 # this view displays report results and filters location if a location is
 # picked
@@ -205,7 +168,7 @@ def resultViewPtpay(request, parameter='none'):
             item.locid = replace_id_w_loc
         return render(request, 'mainforms/reportptpay.html', {'ptpayreport': last_hundred_ptpaymsges})
 
-# this view is por ptpay report edit page or itemedit page depending on
+# this view is for ptpay report edit page or individual entry edit page depending on
 # parameter
 
 
@@ -233,10 +196,9 @@ def resultViewPtpayEdit(request, parameter='none'):
         editLoc = LocationsUpdateForm(instance=getLoc)
         return render(request, 'mainforms/ptpayitemedit.html', {'itemid': parameter, 'form': editForm, 'formdate': convertedDate, 'location': editLoc, 'staff': editEmp})
 
-# this view displays last hundred entries but with edit button, if edit is
+
+# this view below displays last hundred entries but with edit button, if edit is
 # clicked it takes you to the item edit mode
-
-
 @login_required
 def reporteditView(request, parameter='none'):
     if parameter == 'none':
@@ -306,7 +268,7 @@ def clogitemupdateView(request, parameter):
     clogRoundedTotalCash = round(clogTotalcash, 2)
     updateEntry.update(onec=postCashArray['onec'], fivec=postCashArray['fivec'], tenc=postCashArray['tenc'], twfvc=postCashArray['twfvc'], oned=postCashArray['oned'], twod=postCashArray['twod'], fived=postCashArray['fived'], tend=postCashArray['tend'], twntd=postCashArray['twntd'], staffid=getEmployee.staffid, locid=getLocation.locid, shifttime=postCashArray['shifttime'],
                        entrydate=postCashArray['entrydate'], totalcash=clogRoundedTotalCash, recount=postCashArray['recount'])
-    return render(request, 'mainforms/test.html', {'test': errorsCform})
+    return render(request, 'mainforms/postupdate.html', {'cashlog_errors': errorsCform})
 
 
 @login_required
@@ -342,7 +304,7 @@ def ptpayItemEditView(request, parameter):
 
     updateEntry.update(datepay=postPtpayArray['datepay'], ptnamepay=postPtpayArray['ptnamepay'], ptidpay=postPtpayArray['ptidpay'], otherpay=postPtpayArray[
                        'otherpay'], amountpay=postPtpayArray['amountpay'], staffid=getEmployee.staffid, locid=getLocation.locid, payitem=postPtpayArray['payitem'], paytype=postPtpayArray['paytype'])
-    return render(request, 'mainforms/test.html')
+    return render(request, 'mainforms/postupdate.html')
 
 
 @login_required
@@ -386,7 +348,7 @@ def deleteView(request):
                                  modifiedentryid=ptpayEntryId, audittype=formType)
             ptPayObject.delete()
 
-            return render(request, 'mainforms/deleteItem.html', {'passMessage': successMessage, 'test': auditMessage})
+            return render(request, 'mainforms/deleteItem.html', {'passMessage': successMessage, 'audit_message': auditMessage})
 
         else:
             return render(request, 'mainforms/deleteItem.html', {'passMessage': notSuccessMessage})
@@ -436,24 +398,17 @@ def deleteViewCashlog(request):
 
 @login_required
 def auditView(request):
+    """audit search form page"""
     if request.user.username == 'admin':
         auditForm = AuditForm()
         return render(request, 'mainforms/audit.html', {'auditForm': auditForm})
     else:
         return render(request, 'mainforms/unauthorized.html')
-    # elif parameter == 'patientpay':
- #   results = Audit.objects.filter(
-  #      audittype='patientpay').order_by('-deletedate')
-   # return render(request, 'mainforms/audit-ptpay.html', {'results': results})
-    # elif parameter == 'cashlog':
- #   results = Audit.objects.filter(
-  #      audittype='patientpay').order_by('-deletedate')
-   # return render(request, 'mainforms/audit-cashlog.html', {'results':
-   # results})
 
 
 @login_required
 def auditViewPost(request):
+    """result of audit search page"""
     auditform = AuditForm(request.POST)
     if AuditForm().is_valid:
         startdate = request.POST.get('start_date')

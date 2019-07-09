@@ -21,6 +21,6 @@ class UnManagedModelTestRunner(DiscoverRunner):
             m._meta.managed = False
 
 
-# this util file it to switch unmanaged models to manged for testing. Settinng had to be modfieid as well
+# this util file is to switch unmanaged models to manged for testing. Settinng had to be modfieid as well
 # see test_runner settings, and also installed test without migration
 # package for models with custom name
